@@ -97,6 +97,7 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace
         mkdir clang-aosp
         wget https://github.com/YongfaWang/KernelSU_Action/raw/refs/heads/main/linux-x86-refs_heads_master-kernel-build-2022-clang-r450784e.tar.gz
+        mv linux-x86-refs_heads_master-kernel-build-2022-clang-r450784e.tar.gz clang-${{ env.CLANG_VERSION }}.tar.gz
         tar -C clang-aosp/ -zxvf clang-${{ env.CLANG_VERSION }}.tar.gz
 
     - name: Download Custom-Clang
@@ -177,7 +178,7 @@ jobs:
       if: env.BUILD_BOOT_IMG == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://android.googlesource.com/platform/system/tools/mkbootimg tools -b master-kernel-build-2022 --depth=1
+        git clone https://github.com/YongfaWang/mkbootimg tools --depth=1
 
     - name: Download kernel source
       run: |
