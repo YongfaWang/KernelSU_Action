@@ -332,6 +332,34 @@ jobs:
             exit 1
         fi
 
+    - name: Upload raw Image
+      run: |
+        if [ -f kernel_workspace/android-kernel/out/arch/${{ env.ARCH }}/boot/Image ]; then
+          echo "RAW_IMAGE_EXISTS=true" >> $GITHUB_ENV
+        fi
+      shell: bash
+
+    - name: Upload raw Image artifact
+      if: env.RAW_IMAGE_EXISTS == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Image${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
+        path: kernel_workspace/android-kernel/out/arch/${{ env.ARCH }}/boot/Image
+
+    - name: Package boot directory
+      if: env.CHECK_FILE_IS_OK == 'true'
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/out/arch/${{ env.ARCH }}/boot
+        tar -czf ../../../../kernel_workspace/boot_output.tar.gz .
+        echo "BOOT_PACKAGE_EXISTS=true" >> $GITHUB_ENV
+
+    - name: Upload boot directory
+      if: env.BOOT_PACKAGE_EXISTS == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: boot_dir${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
+        path: kernel_workspace/boot_output.tar.gz
+
     - name: Upload ${{ env.KERNEL_IMAGE_NAME }}
       if: env.CHECK_FILE_IS_OK == 'true'
       uses: actions/upload-artifact@v4
