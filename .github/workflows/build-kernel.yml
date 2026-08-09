@@ -214,11 +214,12 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
 
-        # Fix missing OPLUS vendor symlink targets (not open-sourced)
-        mkdir -p vendor/oplus/kernel/oplus_performance/sched_assist
-        mkdir -p vendor/oplus/kernel/oplus_performance/klockopt
-        echo '# placeholder' > vendor/oplus/kernel/oplus_performance/sched_assist/Kconfig
-        echo '# placeholder' > vendor/oplus/kernel/oplus_performance/klockopt/Kconfig
+        # Fix broken OPLUS symlinks (replace with real dirs)
+        rm -rf kernel/sched_assist kernel/locking/klockopt
+        mkdir -p kernel/sched_assist
+        mkdir -p kernel/locking/klockopt
+        echo '# placeholder' > kernel/sched_assist/Kconfig
+        echo '# placeholder' > kernel/locking/klockopt/Kconfig
         if [ ${{ env.APPLY_KSU_PATCH }} = true ]; then
             if grep -q "CONFIG_KSU" arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}; then
                 sed -i 's/# CONFIG_KSU is not set/CONFIG_KSU=y/g' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
